@@ -60,8 +60,9 @@ void Robot::TeleopInit() {}
 
 void Robot::TeleopPeriodic()
 {
-  // NOTE: this project is a demo and not expected to work
-
+  /* https://docs.google.com/presentation/d/1IBYSYjfh4JwQ7NEGU0dBCiW33O0HDwejURL-Y8JQ0Gg/edit#slide=id.g13ef22b85ee_2_50
+     was used as a guide for this code.
+  */
   /*
    Note that XY vectors are composed of two doubles of an x coordinate
    and a y coordinate respectively.
@@ -70,15 +71,15 @@ void Robot::TeleopPeriodic()
   */
   double x_target = m_stick.GetX();
   double y_target = m_stick.GetY();
-  double z_target;
+  double z_target = m_stick.GetRightY();
 
-  std::vector<double> *strafe_vector;
-  std::vector<double> *turn_vector;
+  std::vector<double> strafe_vector;
+  std::vector<double> turn_vector;
+  std::vector<double> final_vector;
 
-  x_vector = &Robot::get_strafe_vector(&x_target, &y_target);
-  y_vector = &Robot::get_y_vector();
-  z_vector = &Robot::get_z_vector();
-
+  strafe_vector = get_strafe_vector(x_target, y_target);
+  turn_vector = get_turn_vector(z_target, module);
+  final_vector = get_final_vector(strafe_vector, turn_vector, module)
 }
 
 /**
@@ -86,23 +87,102 @@ void Robot::TeleopPeriodic()
  * An example of strafe vectors can be found here: https://0x0.st/oeqr.png
  * The vectors for strafing are the same for each wheel
  */
-std::vector<double> Robot::get_strafe_vector(double *x_target, double *y_target)
+std::vector<double> Robot::get_strafe_vector(x_target, y_target)
 {
-  std::vector<double> x_vector {&x_target, 0.0};
-  std::vector<double> y_vector {0.0, &y_target};
+  // There is a non-zero chance that I screwed this up remarkably.
+  // This differs from the 4499 documentation but it makes more sense.
+  std::vector<double> x_vector {x_target, 0.0};
+  std::vector<double> y_vector {0.0, y_target};
 
   std::vector<double> return_vector;
 
-  return_vector = { ( x_vector.at(0) + y_vector.at(0) ),
-                    ( x_vector.at(1) + y_vector.at(1) ) };
+  return_vector = { ( x_vector[0] + y_vector[0] ),
+                    ( x_vector[1] + y_vector[1] ) };
 
   return return_vector;
+}
 
-double Robot::get_turn_vector(double yTarget) {}
+std::vector<double> Robot::get_turn_vector(double yTarget,
+                                           module_location module)
+{
+  double target_velocity = ( ( y_target * Robot::TURN_MAPPING_CONST)
+                             * Robot::ROBOT_RADIUS );
+ // Return an xy vector for turning that is later converted into a zm vector
+  std::vector<double> turn_vector;
 
-double Robot::GetZVector(double zTarget) {}
+  switch (module)
+    {
+  case FORE_PORT:
+    turn_vector[0] = target_velocity * FORE_PORT_TURN_MN[0];
+    turn_vector[1] = target_velocity * FORE_PORT_TURN_MN[1];
+    break;
 
-void Robot::DisabledInit() {}
+  case FORE_STARBOARD:
+    turn_vector[0] = target_velocity * FORE_STARBOARD_TURN_MN[0];
+    turn_vector[1] = target_velocity * FORE_STARBOARD_TURN_MN[1];
+      break;
+
+  case AFT_PORT:
+    turn_vector[0] = target_velocity * AFT_PORT_TURN_MN[0];
+    turn_vector[1] = target_velocity * AFT_PORT_TURN_MN[1];
+      break;
+
+  case AFT_STARBOARD:
+    turn_vector[0] = target_velocity * AFT_STARBOARD_TURN_MN[0];
+    turn_vector[1] = target_velocity * AFT_STARBOARD_TURN_MN[1];
+      break;
+
+  default:
+    std::cout << "ERROR: No module given for turn calculation." << "\n";
+    return {0,0}
+    break;
+
+  }
+
+  return turn_vector;
+}
+
+std::vector<double> Robot::xy_to_zm(std::vector<double> in_vector) {
+  /** Structure of a zm variable is composed of two doubles.
+   * The first is the angle from straight forwards.
+   * The second is a magnitude that ranges from 0 (no power) to 1 (full power)
+   * It is possible that the current code could return a value larger than 0
+   * such as sqrt(2).
+   * It is unclear what should be done for that issue.
+   */
+  std::vector<double> out_vector;
+
+  // Distance formula to determine magnitude.
+  // Zeroes are included to stay true to the formula.
+
+  out_vector[1] =
+    ( std::sqrt( std::pow( ( in_vector[0] - 0 ), 2 ) +
+                 std::pow( ( in_vector[1] - 0 ), 2 ) ) );
+
+  // Now for the hard part, determining an angle given two points.
+  // I do not understand how to do this, however, it looks like std::atan2 does
+
+  //atan2 uses y,x
+  out_vector[0] = std::atan2( in_vector[1], in_vector[0] );
+  // Convert to degrees
+  out_vector[0] = out_vector[0] * 180 / 3.14;
+
+  return out_vector[0];
+}
+
+std::vector<double> Robot::get_final_vector(std::vector<double> strafe_vector, turn_vector) {
+
+  std::vector<double> return_vector;
+  return_vector[0] = strafe_vector[0] + turn_vector[0];
+  return_vector[1] = strafe_vector[1] + turn_vector[0];
+
+  std::vector<double> zm_vector = Robot::get_final_vector(return_vector);
+
+  return zm_vector;
+}
+
+
+Robot::DisabledInit() {}
 
 void Robot::DisabledPeriodic() {}
 
