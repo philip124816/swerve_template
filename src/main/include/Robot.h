@@ -12,11 +12,21 @@
 #include <frc/smartdashboard/SendableChooser.h>
 
 class Robot : public frc::TimedRobot {
+
  public:
+
+  enum module_location
+    {
+      FORE_PORT,
+      FORE_STARBOARD,
+      AFT_PORT,
+      AFT_STARBOARD,
+    };
+
   std::vector<double> get_strafe_vector(double x_target, double y_target);
 
   std::vector<double> get_turn_vector(double yTarget,
-                                    Robot::module_location module);
+                                      module_location module);
 
   std::vector<double> get_final_vector(std::vector<double> strafe_vector, 
                                        std::vector<double> turn_vector);
@@ -37,13 +47,7 @@ class Robot : public frc::TimedRobot {
   void SimulationPeriodic() override;
 
 
-enum module_location
-    {
-      FORE_PORT,
-      FORE_STARBOARD,
-      AFT_PORT,
-      AFT_STARBOARD,
-    };
+
 
  private:
   frc::SendableChooser<std::string> m_chooser;
@@ -67,9 +71,11 @@ const std::vector<double> AFT_STARBOARD_TURN_VEC {1.0, 1.0};
 const std::vector<double> FORE_PORT_MN =  { ( (std::sqrt(2) * -1 ) /2 ),
                                                      ( std::sqrt(2) / 2 ) };
 
-const std::vector<double> FORE_STARBOARD_MN( ( std::sqrt(2) / 2 ), 2);
+const std::vector<double> FORE_STARBOARD_MN = { ( std::sqrt(2) / 2 ),
+                                                ( ( std::sqrt(2) ) / 2) };
   
-const std::vector<double> AFT_PORT_MN( ( ( std::sqrt(2) * -1 ) / 2) , 2);
+  const std::vector<double> AFT_PORT_MN = { ( ( std::sqrt(2) * -1 ) / 2),
+                                            ( ( std::sqrt(2) * -1 ) / 2) };
 
 const std::vector<double> AFT_STARBOARD_MN = { (std::sqrt(2) / 2 ) ,
                                                         ( (std::sqrt(2) / -1 )
