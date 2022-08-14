@@ -69,17 +69,42 @@ void Robot::TeleopPeriodic()
    The value of each double can range from -1 to 1 which correspond directly
    to throttle values.
   */
-  double x_target = m_stick.GetX();
-  double y_target = m_stick.GetY();
+  double x_target = m_stick.GetLeftX();
+  double y_target = m_stick.GetLeftY();
   double z_target = m_stick.GetRightY();
 
   std::vector<double> strafe_vector;
   std::vector<double> turn_vector;
-  std::vector<double> final_vector;
 
   strafe_vector = get_strafe_vector(x_target, y_target);
-  turn_vector = get_turn_vector(z_target, module);
-  final_vector = get_final_vector(strafe_vector, turn_vector, module)
+
+  // tv means 'turn vector'
+  std::vector<double> tv_fore_port = get_turn_vector(z_target,
+                                                     Robot::FORE_PORT);
+  std::vector<double> tv_aft_port = get_turn_vector(z_target,
+                                                     Robot::AFT_PORT);
+
+  std::vector<double> tv_fore_starboard = get_turn_vector(z_target,
+                                                          Robot::FORE_STARBOARD);
+
+  std::vector<double> tv_aft_starboard = get_turn_vector(z_target,
+                                                         Robot::AFT_STARBOARD);
+
+  // fv means final vector
+//  final_vector = get_final_vector(strafe_vector, turn_vector, module)
+
+  std::vector<double> fv_fore_port = get_final_vector(strafe_vector,
+                                                      tv_fore_port);
+
+  std::vector<double> fv_aft_port = get_final_vector(strafe_vector,
+                                                     tv_aft_port);
+
+  std::vector<double> fv_fore_starboard = get_final_vector(strafe_vector,
+                                                           tv_fore_starboard);
+
+  std::vector<double> fv_aft_starboard = get_final_vector(strafe_vector,
+                                                          tv_aft_starboard);
+
 }
 
 /**
@@ -87,12 +112,12 @@ void Robot::TeleopPeriodic()
  * An example of strafe vectors can be found here: https://0x0.st/oeqr.png
  * The vectors for strafing are the same for each wheel
  */
-std::vector<double> Robot::get_strafe_vector(x_target, y_target)
+std::vector<double> Robot::get_strafe_vector(double x_target, double y_target)
 {
   // There is a non-zero chance that I screwed this up remarkably.
   // This differs from the 4499 documentation but it makes more sense.
-  std::vector<double> x_vector {x_target, 0.0};
-  std::vector<double> y_vector {0.0, y_target};
+  std::vector<double> x_vector = {x_target, 0.0};
+  std::vector<double> y_vector = {0.0, y_target};
 
   std::vector<double> return_vector;
 
@@ -102,42 +127,43 @@ std::vector<double> Robot::get_strafe_vector(x_target, y_target)
   return return_vector;
 }
 
-std::vector<double> Robot::get_turn_vector(double yTarget,
+std::vector<double> Robot::get_turn_vector(double y_target,
                                            module_location module)
 {
-  double target_velocity = ( ( y_target * Robot::TURN_MAPPING_CONST)
-                             * Robot::ROBOT_RADIUS );
- // Return an xy vector for turning that is later converted into a zm vector
+
+  /** Returns a ZM vector for turning.
+   * The angle remains static regardless of the requested turn,
+   * however the magnitude changes depending on the y input.
+   */
+
   std::vector<double> turn_vector;
 
   switch (module)
     {
   case FORE_PORT:
-    turn_vector[0] = target_velocity * FORE_PORT_TURN_MN[0];
-    turn_vector[1] = target_velocity * FORE_PORT_TURN_MN[1];
+    turn_vector[0] = FORE_PORT_TURN_ANGLE;
     break;
 
   case FORE_STARBOARD:
-    turn_vector[0] = target_velocity * FORE_STARBOARD_TURN_MN[0];
-    turn_vector[1] = target_velocity * FORE_STARBOARD_TURN_MN[1];
+    turn_vector[0] = FORE_STARBOARD_TURN_ANGLE;
       break;
 
   case AFT_PORT:
-    turn_vector[0] = target_velocity * AFT_PORT_TURN_MN[0];
-    turn_vector[1] = target_velocity * AFT_PORT_TURN_MN[1];
+       turn_vector[0] = AFT_PORT_TURN_ANGLE;
       break;
 
   case AFT_STARBOARD:
-    turn_vector[0] = target_velocity * AFT_STARBOARD_TURN_MN[0];
-    turn_vector[1] = target_velocity * AFT_STARBOARD_TURN_MN[1];
+    turn_vector[0] = AFT_STARBOARD_TURN_ANGLE;
       break;
 
   default:
     std::cout << "ERROR: No module given for turn calculation." << "\n";
-    return {0,0}
+    return {0,0};
     break;
 
   }
+
+  turn_vector[1] = y_target;
 
   return turn_vector;
 }
@@ -167,22 +193,20 @@ std::vector<double> Robot::xy_to_zm(std::vector<double> in_vector) {
   // Convert to degrees
   out_vector[0] = out_vector[0] * 180 / 3.14;
 
-  return out_vector[0];
+  return out_vector;
 }
 
-std::vector<double> Robot::get_final_vector(std::vector<double> strafe_vector, turn_vector) {
+std::vector<double> Robot::get_final_vector(std::vector<double> strafe_vector, std::vector<double> turn_vector) {
 
   std::vector<double> return_vector;
-  return_vector[0] = strafe_vector[0] + turn_vector[0];
-  return_vector[1] = strafe_vector[1] + turn_vector[0];
+  return_vector[0] = ( (strafe_vector[0] + turn_vector[0]) / 2 );
+  return_vector[1] = ( (strafe_vector[1] + turn_vector[0]) / 2 );
 
-  std::vector<double> zm_vector = Robot::get_final_vector(return_vector);
-
-  return zm_vector;
+  return return_vector;
 }
 
 
-Robot::DisabledInit() {}
+void Robot::DisabledInit() {}
 
 void Robot::DisabledPeriodic() {}
 

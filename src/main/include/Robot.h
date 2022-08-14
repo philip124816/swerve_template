@@ -7,9 +7,12 @@
 #include <string>
 #include <vector>
 #include <cmath>
+#include <iostream>
+
 
 #include <frc/TimedRobot.h>
 #include <frc/smartdashboard/SendableChooser.h>
+#include <frc/XboxController.h>
 
 class Robot : public frc::TimedRobot {
 
@@ -55,29 +58,13 @@ class Robot : public frc::TimedRobot {
   const std::string kAutoNameCustom = "My Auto";
   std::string m_autoSelected;
 
+  frc::XboxController m_stick {0};
 
-  static const double MAX_ANGULAR_VELOCITY;
-  static const double ROBOT_RADIUS;
-  static const double TURN_MAPPING_CONST;
-  // TURN_MAPPING_CONST is the number needed to multiply the driver input into
-  // the target rotation speed.
+  // The best angles for turning clockwise
+const double FORE_PORT_TURN_ANGLE = 45;
+const double FORE_STARBOARD_TURN_ANGLE = 315
+const double AFT_PORT_TURN_ANGLE = 135;
+const double AFT_STARBOARD_TURN_ANGLE = 225;
 
-const std::vector<double> FORE_PORT_TURN_VEC = {-1.0, -1.0};
-const std::vector<double> FORE_STARBOARD_TURN_VEC = {1.0, -1.0};
-const std::vector<double> AFT_PORT_TURN_VEC = {-1.0, 1.0};
-const std::vector<double> AFT_STARBOARD_TURN_VEC {1.0, 1.0};
 
-  // MN stands for 'magic number' in this context.
-const std::vector<double> FORE_PORT_MN =  { ( (std::sqrt(2) * -1 ) /2 ),
-                                                     ( std::sqrt(2) / 2 ) };
-
-const std::vector<double> FORE_STARBOARD_MN = { ( std::sqrt(2) / 2 ),
-                                                ( ( std::sqrt(2) ) / 2) };
-  
-  const std::vector<double> AFT_PORT_MN = { ( ( std::sqrt(2) * -1 ) / 2),
-                                            ( ( std::sqrt(2) * -1 ) / 2) };
-
-const std::vector<double> AFT_STARBOARD_MN = { (std::sqrt(2) / 2 ) ,
-                                                        ( (std::sqrt(2) / -1 )
-                                                          / 2)};
-
+};
