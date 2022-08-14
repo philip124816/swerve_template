@@ -112,7 +112,7 @@ void Robot::TeleopPeriodic()
  * An example of strafe vectors can be found here: https://0x0.st/oeqr.png
  * The vectors for strafing are the same for each wheel
  */
-std::vector<double> Robot::get_strafe_vector(double x_target, double y_target)
+std::vector<double> Robot::get_strafe_vector(double &x_target, double &y_target)
 {
   // There is a non-zero chance that I screwed this up remarkably.
   // This differs from the 4499 documentation but it makes more sense.
@@ -127,7 +127,7 @@ std::vector<double> Robot::get_strafe_vector(double x_target, double y_target)
   return return_vector;
 }
 
-std::vector<double> Robot::get_turn_vector(double y_target,
+std::vector<double> Robot::get_turn_vector(double &y_target,
                                            module_location module)
 {
 
@@ -168,7 +168,7 @@ std::vector<double> Robot::get_turn_vector(double y_target,
   return turn_vector;
 }
 
-std::vector<double> Robot::xy_to_zm(std::vector<double> in_vector) {
+std::vector<double> Robot::xy_to_zm(std::vector<double> &in_vector) {
   /** Structure of a zm variable is composed of two doubles.
    * The first is the angle from straight forwards.
    * The second is a magnitude that ranges from 0 (no power) to 1 (full power)
@@ -196,7 +196,7 @@ std::vector<double> Robot::xy_to_zm(std::vector<double> in_vector) {
   return out_vector;
 }
 
-std::vector<double> Robot::get_final_vector(std::vector<double> strafe_vector, std::vector<double> turn_vector) {
+std::vector<double> Robot::get_final_vector(std::vector<double> &strafe_vector, std::vector<double> &turn_vector) {
 
   std::vector<double> return_vector;
   return_vector[0] = ( (strafe_vector[0] + turn_vector[0]) / 2 );

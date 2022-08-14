@@ -26,15 +26,15 @@ class Robot : public frc::TimedRobot {
       AFT_STARBOARD,
     };
 
-  std::vector<double> get_strafe_vector(double x_target, double y_target);
+  std::vector<double> get_strafe_vector(double &x_target, double &y_target);
 
-  std::vector<double> get_turn_vector(double yTarget,
+  std::vector<double> get_turn_vector(double &y_target,
                                       module_location module);
 
-  std::vector<double> get_final_vector(std::vector<double> strafe_vector, 
-                                       std::vector<double> turn_vector);
+  std::vector<double> get_final_vector(std::vector<double> &strafe_vector,
+                                       std::vector<double> &turn_vector);
 
-  std::vector<double> xy_to_zm(std::vector<double> in_vector);
+  std::vector<double> xy_to_zm(std::vector<double> &in_vector);
 
   void RobotInit() override;
   void RobotPeriodic() override;
@@ -62,7 +62,7 @@ class Robot : public frc::TimedRobot {
 
   // The best angles for turning clockwise
 const double FORE_PORT_TURN_ANGLE = 45;
-const double FORE_STARBOARD_TURN_ANGLE = 315
+const double FORE_STARBOARD_TURN_ANGLE = 315;
 const double AFT_PORT_TURN_ANGLE = 135;
 const double AFT_STARBOARD_TURN_ANGLE = 225;
 
