@@ -29,7 +29,7 @@ class Robot : public frc::TimedRobot {
   std::vector<double> get_strafe_vector(double &x_target, double &y_target);
 
   std::vector<double> get_turn_vector(double &y_target,
-                                      module_location module);
+                                      module_location rmodule);
 
   std::vector<double> get_final_vector(std::vector<double> &strafe_vector,
                                        std::vector<double> &turn_vector);
@@ -60,11 +60,12 @@ class Robot : public frc::TimedRobot {
 
   frc::XboxController m_stick {0};
 
-  // The best angles for turning clockwise
-const double FORE_PORT_TURN_ANGLE = 45;
-const double FORE_STARBOARD_TURN_ANGLE = 315;
-const double AFT_PORT_TURN_ANGLE = 135;
-const double AFT_STARBOARD_TURN_ANGLE = 225;
+  // The best angles for turning clockwise.
+  // All units are radians.
+  const double FORE_PORT_TURN_ANGLE = 0.78549815;
+  const double FORE_STARBOARD_TURN_ANGLE = -0.78549815;
+  const double AFT_PORT_TURN_ANGLE = 2.35619;
+  const double AFT_STARBOARD_TURN_ANGLE =  -2.35619;
 
 
 };

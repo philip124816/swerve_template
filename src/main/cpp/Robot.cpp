@@ -158,7 +158,7 @@ std::vector<double> Robot::get_turn_vector(double &y_target,
 
   default:
     std::cout << "ERROR: No module given for turn calculation." << "\n";
-    return {0,0};
+    return {0.0, 0.0};
     break;
 
   }
@@ -182,16 +182,18 @@ std::vector<double> Robot::xy_to_zm(std::vector<double> &in_vector) {
   // Zeroes are included to stay true to the formula.
 
   out_vector[1] =
-    ( std::sqrt( std::pow( ( in_vector[0] - 0 ), 2 ) +
-                 std::pow( ( in_vector[1] - 0 ), 2 ) ) );
+    ( std::sqrt( std::pow( ( in_vector[0] - 0.0 ), 2.0 ) +
+                 std::pow( ( in_vector[1] - 0.0 ), 2.0 ) ) );
 
   // Now for the hard part, determining an angle given two points.
   // I do not understand how to do this, however, it looks like std::atan2 does
 
   //atan2 uses y,x
+  // If the point is in quadrants III or IV it will return a negative value.
+  // Said value is always the shortest angle from a ray that intersects 1,0
+
   out_vector[0] = std::atan2( in_vector[1], in_vector[0] );
-  // Convert to degrees
-  out_vector[0] = out_vector[0] * 180 / 3.14;
+
 
   return out_vector;
 }
@@ -199,8 +201,8 @@ std::vector<double> Robot::xy_to_zm(std::vector<double> &in_vector) {
 std::vector<double> Robot::get_final_vector(std::vector<double> &strafe_vector, std::vector<double> &turn_vector) {
 
   std::vector<double> return_vector;
-  return_vector[0] = ( (strafe_vector[0] + turn_vector[0]) / 2 );
-  return_vector[1] = ( (strafe_vector[1] + turn_vector[0]) / 2 );
+  return_vector[0] = ( (strafe_vector[0] + turn_vector[0]) / 2.0 );
+  return_vector[1] = ( (strafe_vector[1] + turn_vector[0]) / 2.0 );
 
   return return_vector;
 }
