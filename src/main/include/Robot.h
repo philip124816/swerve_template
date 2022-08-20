@@ -62,10 +62,10 @@ class Robot : public frc::TimedRobot {
 
   // The best angles for turning clockwise.
   // All units are radians.
-  const double FORE_PORT_TURN_ANGLE = 0.78549815;
-  const double FORE_STARBOARD_TURN_ANGLE = -0.78549815;
-  const double AFT_PORT_TURN_ANGLE = 2.35619;
-  const double AFT_STARBOARD_TURN_ANGLE =  -2.35619;
+const double FORE_PORT_TURN_ANGLE = 0.78549815;
+const double FORE_STARBOARD_TURN_ANGLE = -0.78549815;
+const double AFT_PORT_TURN_ANGLE = -2.35619;
+const double AFT_STARBOARD_TURN_ANGLE =  -2.35619;
 
 
 };
