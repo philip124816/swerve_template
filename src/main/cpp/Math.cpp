@@ -146,7 +146,7 @@ std::vector<double> Math::zm_to_xy(std::vector<double> &in_vector)
   // Taken from https://keisan.casio.com/exec/system/1223527679#
   std::vector<double> out_vector;
   out_vector[0] = in_vector[1] * std::cos(in_vector[0]);
-  out_vector[1] = in_vector[1] * std::sin(in_vector[1]);
+  out_vector[1] = in_vector[1] * std::sin(in_vector[0]);
   return out_vector;
 }
 
@@ -157,6 +157,6 @@ std::vector<double> Math::get_final_vector(std::vector<double> &strafe_vector,
   std::vector<double> return_vector;
   return_vector[0] = (strafe_vector[0] + turn_vector[0]);
   return_vector[1] = (strafe_vector[1] + turn_vector[1]);
-  return_vector = xy_to_zm(final_vector);
+  return_vector = xy_to_zm(return_vector);
   return return_vector;
 }
