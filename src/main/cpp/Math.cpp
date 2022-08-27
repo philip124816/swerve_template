@@ -153,7 +153,7 @@ std::vector<double> Math::zm_to_xy(std::vector<double> &in_vector)
 std::vector<double> Math::get_final_vector(std::vector<double> &strafe_vector,
                                             std::vector<double> &turn_vector)
 {
-  strafe_vector = zm_to_xy(strafe_vector);
+  turn_vector = zm_to_xy(turn_vector);
   std::vector<double> return_vector;
   return_vector[0] = (strafe_vector[0] + turn_vector[0]);
   return_vector[1] = (strafe_vector[1] + turn_vector[1]);
