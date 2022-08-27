@@ -22,6 +22,7 @@ private:
   struct PidCoeff {
     double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
   };
+
  WPI_talonFX m_FORE_PORT_MOTOR {};
  WPI_talonFX m_FORE_STARBOARD_MOTOR {};
  WPI_talonFX m_AFT_PORT_MOTOR {};
